@@ -13,9 +13,12 @@ class MainStackTest {
     MainStack stack = new MainStack(app, "TestStack", null);
 
     assertNotNull(stack);
+    assertNotNull(stack.getVpc());
     assertNotNull(stack.getBucket());
     assertNotNull(stack.getQueue());
     assertNotNull(stack.getTable());
+    assertNotNull(stack.getRestApi());
+    assertNotNull(stack.getSoapApi());
   }
 
   @Test
@@ -24,8 +27,11 @@ class MainStackTest {
     MainStack stack = new MainStack(app, "TestStack2", null);
 
     assertDoesNotThrow(() -> app.synth());
+    assertNotNull(stack.getVpc());
     assertNotNull(stack.getBucket());
     assertNotNull(stack.getQueue());
     assertNotNull(stack.getTable());
+    assertNotNull(stack.getRestApi());
+    assertNotNull(stack.getSoapApi());
   }
 }
