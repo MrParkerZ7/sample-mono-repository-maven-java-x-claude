@@ -31,7 +31,7 @@ module/
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  ┌─────────────────┐                                                    │
-│  │  architecture/  │  System-level documentation & decisions            │
+│  │      docs/      │  System-level documentation & decisions            │
 │  └─────────────────┘                                                    │
 │                                                                         │
 │  ┌─────────────────────────────────────────────────────────────────┐    │
@@ -75,13 +75,12 @@ sample-mono-repository/
 ├── README.md                            # This file
 ├── CLAUDE.md                            # AI agent instructions
 │
-├── architecture/                        # ══ SYSTEM-LEVEL DOCUMENTATION ══
+├── docs/                                # ══ DOCUMENTATION ══
 │   ├── system.md                        # System architecture & diagrams
-│   ├── decisions/                       # Architectural Decision Records
-│   │   ├── README.md
-│   │   ├── ADR-001-maven-structure.md
-│   │   └── ADR-002-module-structure.md
-│   └── glossary.md                      # Domain terms & abbreviations
+│   ├── glossary.md                      # Domain terms & abbreviations
+│   ├── adr/                             # Architectural Decision Records
+│   ├── analysis/                        # Architecture analysis documents
+│   └── diagrams/                        # Visual diagrams (Draw.io)
 │
 ├── common/                              # ══ SHARED MODULES ══
 │   ├── pom.xml                          # Aggregator POM
@@ -197,9 +196,7 @@ sample-mono-repository/
 │   │       └── SoapApiConstruct.java
 │   └── src/test/java/...
 │
-└── docs/                                # ══ ADDITIONAL RESOURCES ══
-    ├── adr/                             # Additional ADRs
-    └── diagrams/                        # Visual diagrams (Draw.io)
+└── .gitignore
 ```
 
 ---
@@ -467,7 +464,7 @@ Example: Adding a new batch job `notify-daily`:
 
 ```
 1. CLAUDE.md                  # Build & conventions
-2. architecture/system.md     # System architecture
+2. docs/system.md             # System architecture
 3. module/README.md           # Module quick start
 4. module/docs/overview.md    # Module design
 5. module/docs/api.md         # API contracts

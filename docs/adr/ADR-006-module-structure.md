@@ -1,4 +1,4 @@
-# ADR-002: Self-Contained Module Structure
+# ADR-006: Self-Contained Module Structure
 
 ## Status
 Accepted

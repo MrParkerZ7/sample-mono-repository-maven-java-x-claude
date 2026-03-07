@@ -35,6 +35,7 @@ What becomes easier or more difficult to do because of this change?
 | [ADR-003](ADR-003-google-java-format.md) | Use Google Java Format | Accepted |
 | [ADR-004](ADR-004-aws-sdk-wrappers.md) | AWS SDK Wrappers | Accepted |
 | [ADR-005](ADR-005-ai-native-documentation.md) | AI-Native Documentation Structure | Accepted |
+| [ADR-006](ADR-006-module-structure.md) | Self-Contained Module Structure | Accepted |
 
 ## Creating a New ADR
 

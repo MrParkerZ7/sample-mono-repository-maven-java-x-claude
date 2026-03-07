@@ -38,10 +38,12 @@ module/
 
 ```
 repo/
-├── architecture/           # System docs & decisions
+├── docs/                  # Documentation
 │   ├── system.md          # Architecture overview
-│   ├── decisions/         # ADRs
-│   └── glossary.md        # Terms
+│   ├── glossary.md        # Terms
+│   ├── adr/               # ADRs
+│   ├── analysis/          # Analysis docs
+│   └── diagrams/          # Draw.io diagrams
 │
 ├── service/               # Service modules (hierarchical)
 │   ├── rest/              # REST aggregator
@@ -71,7 +73,7 @@ When working on a module, load context in this order:
 
 ```
 1. CLAUDE.md                  # This file (conventions)
-2. architecture/system.md     # System architecture
+2. docs/system.md             # System architecture
 3. module/README.md           # Module quick start
 4. module/docs/overview.md    # Module design
 5. module/docs/api.md         # API contracts
