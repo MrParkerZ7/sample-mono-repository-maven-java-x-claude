@@ -35,13 +35,13 @@ module/
 │  └─────────────────┘                                                    │
 │                                                                         │
 │  ┌─────────────────────────────────────────────────────────────────┐    │
-│  │                      service/ (modules)                         │    │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │    │
-│  │  │    rest     │  │    batch    │  │    soap     │              │    │
-│  │  │  ├ src/     │  │  ├ src/     │  │  ├ src/     │              │    │
-│  │  │  ├ tests/   │  │  ├ tests/   │  │  ├ tests/   │              │    │
-│  │  │  └ docs/    │  │  └ docs/    │  │  └ docs/    │              │    │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘              │    │
+│  │                      service/ (hierarchical)                    │    │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │    │
+│  │  │     rest/       │  │     batch/      │  │     soap/       │  │    │
+│  │  │  ├ sample/      │  │  ├ sample/      │  │  ├ sample/      │  │    │
+│  │  │  ├ another/     │  │  ├ notify-daily/│  │  ├ another/     │  │    │
+│  │  │  └ ...          │  │  └ ...          │  │  └ ...          │  │    │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘  │    │
 │  └─────────────────────────────────────────────────────────────────┘    │
 │                                                                         │
 │  ┌─────────────────────────────────────────────────────────────────┐    │
@@ -149,35 +149,41 @@ sample-mono-repository/
 ├── service/                             # ══ SERVICE MODULES ══
 │   ├── pom.xml                          # Aggregator POM
 │   │
-│   ├── rest/                            # REST API (Port 8080)
-│   │   ├── pom.xml
-│   │   ├── src/main/java/.../rest/
-│   │   │   ├── Application.java
-│   │   │   └── controller/
-│   │   ├── src/main/resources/
-│   │   │   └── application.yml
-│   │   └── src/test/java/...
+│   ├── rest/                            # REST API aggregator
+│   │   ├── pom.xml                      # Aggregator for REST services
+│   │   └── sample/                      # Sample REST service (Port 8080)
+│   │       ├── pom.xml
+│   │       ├── src/main/java/.../rest/
+│   │       │   ├── Application.java
+│   │       │   └── controller/
+│   │       ├── src/main/resources/
+│   │       │   └── application.yml
+│   │       └── src/test/java/...
 │   │
-│   ├── batch/                           # Batch Processing
-│   │   ├── pom.xml
-│   │   ├── src/main/java/.../batch/
-│   │   │   ├── BatchApplication.java
-│   │   │   ├── config/
-│   │   │   └── job/
-│   │   ├── src/main/resources/
-│   │   │   └── application.yml
-│   │   └── src/test/java/...
+│   ├── batch/                           # Batch aggregator
+│   │   ├── pom.xml                      # Aggregator for batch services
+│   │   └── sample/                      # Sample batch job
+│   │       ├── pom.xml
+│   │       ├── src/main/java/.../batch/
+│   │       │   ├── BatchApplication.java
+│   │       │   ├── config/
+│   │       │   └── job/
+│   │       ├── src/main/resources/
+│   │       │   └── application.yml
+│   │       └── src/test/java/...
 │   │
-│   └── soap/                            # SOAP Service (Port 8081)
-│       ├── pom.xml
-│       ├── src/main/java/.../soap/
-│       │   ├── SoapApplication.java
-│       │   ├── config/
-│       │   ├── endpoint/
-│       │   └── model/
-│       ├── src/main/resources/
-│       │   └── application.yml
-│       └── src/test/java/...
+│   └── soap/                            # SOAP aggregator
+│       ├── pom.xml                      # Aggregator for SOAP services
+│       └── sample/                      # Sample SOAP service (Port 8081)
+│           ├── pom.xml
+│           ├── src/main/java/.../soap/
+│           │   ├── SoapApplication.java
+│           │   ├── config/
+│           │   ├── endpoint/
+│           │   └── model/
+│           ├── src/main/resources/
+│           │   └── application.yml
+│           └── src/test/java/...
 │
 ├── infra/                               # ══ INFRASTRUCTURE MODULE ══
 │   ├── pom.xml
@@ -211,13 +217,15 @@ sample-mono-repository/
 | AWS SQS | `aws-sqs` | `common/aws/aws-sqs` | SQS operations wrapper |
 | AWS DynamoDB | `aws-dynamodb` | `common/aws/aws-dynamodb` | DynamoDB operations wrapper |
 
-### Service Modules
+### Service Modules (Hierarchical)
 
-| Module | Artifact ID | Path | Port |
-|--------|-------------|------|------|
-| REST API | `rest` | `service/rest` | 8080 |
-| Batch | `batch` | `service/batch` | - |
-| SOAP | `soap` | `service/soap` | 8081 |
+| Aggregator | Module | Artifact ID | Path | Port |
+|------------|--------|-------------|------|------|
+| rest | Sample REST | `rest-sample` | `service/rest/sample` | 8080 |
+| batch | Sample Batch | `batch-sample` | `service/batch/sample` | - |
+| soap | Sample SOAP | `soap-sample` | `service/soap/sample` | 8081 |
+
+**Structure**: Each service type (rest, batch, soap) is an aggregator that can contain multiple services.
 
 ### Infrastructure Module
 
@@ -293,13 +301,13 @@ mvn test
 
 ```bash
 # REST API (http://localhost:8080)
-cd service/rest && mvn spring-boot:run
+cd service/rest/sample && mvn spring-boot:run
 
 # SOAP Service (http://localhost:8081)
-cd service/soap && mvn spring-boot:run
+cd service/soap/sample && mvn spring-boot:run
 
 # Batch Jobs
-cd service/batch && mvn spring-boot:run
+cd service/batch/sample && mvn spring-boot:run
 ```
 
 ### Deploy Infrastructure
@@ -432,9 +440,11 @@ common/new-module/
 
 ### New Service Module
 
+Services are organized hierarchically by type. To add a new service:
+
 ```
-service/service-new/
-├── pom.xml           # Inherit from ../../pom.xml
+service/{type}/new-service/
+├── pom.xml           # Inherit from ../../../pom.xml
 ├── README.md
 ├── src/
 ├── tests/
@@ -443,6 +453,11 @@ service/service-new/
     ├── api.md
     └── rules.md
 ```
+
+Example: Adding a new batch job `notify-daily`:
+1. Create `service/batch/notify-daily/`
+2. Add `<module>notify-daily</module>` to `service/batch/pom.xml`
+3. Set artifactId to `batch-notify-daily` in new module's pom.xml
 
 ---
 

@@ -43,10 +43,13 @@ repo/
 │   ├── decisions/         # ADRs
 │   └── glossary.md        # Terms
 │
-├── service/               # Service modules
-│   ├── rest/              # REST API (port 8080)
-│   ├── batch/             # Batch jobs
-│   └── soap/              # SOAP (port 8081)
+├── service/               # Service modules (hierarchical)
+│   ├── rest/              # REST aggregator
+│   │   └── sample/        # Sample REST API (port 8080)
+│   ├── batch/             # Batch aggregator
+│   │   └── sample/        # Sample batch job
+│   └── soap/              # SOAP aggregator
+│       └── sample/        # Sample SOAP (port 8081)
 │
 ├── common/                # Shared modules
 │   ├── exception/         # Base/Business/Technical
@@ -126,32 +129,42 @@ throw new TechnicalException("ERR_CODE", "Message", cause);
 
 ## Module Quick Reference
 
-| Module | Path | Port |
-|--------|------|------|
-| REST | `service/rest` | 8080 |
-| Batch | `service/batch` | - |
-| SOAP | `service/soap` | 8081 |
-| CDK | `infra` | - |
+| Type | Module | Artifact ID | Path | Port |
+|------|--------|-------------|------|------|
+| REST | Sample | `rest-sample` | `service/rest/sample` | 8080 |
+| Batch | Sample | `batch-sample` | `service/batch/sample` | - |
+| SOAP | Sample | `soap-sample` | `service/soap/sample` | 8081 |
+| Infra | CDK | `infra` | `infra` | - |
+
+**Note**: Each service type (rest, batch, soap) is an aggregator supporting multiple services.
 
 ---
 
 ## Adding New Module
 
-1. Create module directory with structure:
-   ```
-   module/
-   ├── pom.xml
-   ├── README.md
-   ├── src/
-   ├── tests/
-   └── docs/
-       ├── overview.md
-       ├── api.md
-       └── rules.md
-   ```
-2. Add to parent POM modules list
-3. Write code with 100% test coverage
-4. Run `mvn spotless:apply`
+### New Common Module
+```
+common/new-module/
+├── pom.xml              # relativePath: ../../pom.xml
+├── README.md
+├── src/
+├── tests/
+└── docs/
+```
+Add `<module>new-module</module>` to `common/pom.xml`
+
+### New Service Module
+```
+service/{type}/new-service/
+├── pom.xml              # relativePath: ../../../pom.xml
+├── README.md            # artifactId: {type}-new-service
+├── src/
+├── tests/
+└── docs/
+```
+Add `<module>new-service</module>` to `service/{type}/pom.xml`
+
+Example: `service/batch/notify-daily/` with artifactId `batch-notify-daily`
 
 ---
 
