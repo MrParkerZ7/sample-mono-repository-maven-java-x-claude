@@ -40,16 +40,20 @@ module/
 │  │  │ service-rest│  │service-batch│  │ service-soap│              │    │
 │  │  │  ├ src/     │  │  ├ src/     │  │  ├ src/     │              │    │
 │  │  │  ├ tests/   │  │  ├ tests/   │  │  ├ tests/   │              │    │
-│  │  │  ├ docs/    │  │  ├ docs/    │  │  ├ docs/    │              │    │
-│  │  │  └ README   │  │  └ README   │  │  └ README   │              │    │
+│  │  │  └ docs/    │  │  └ docs/    │  │  └ docs/    │              │    │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘              │    │
 │  └─────────────────────────────────────────────────────────────────┘    │
 │                                                                         │
 │  ┌─────────────────────────────────────────────────────────────────┐    │
 │  │                      common/ (modules)                          │    │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐         │    │
-│  │  │exception │  │  utils   │  │   env    │  │   aws    │         │    │
-│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘         │    │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────────────┐   │    │
+│  │  │exception │  │  utils   │  │   env    │  │      aws/      │   │    │
+│  │  │          │  │          │  │          │  │ ┌────────────┐ │   │    │
+│  │  │          │  │          │  │          │  │ │aws-s3      │ │   │    │
+│  │  │          │  │          │  │          │  │ │aws-sqs     │ │   │    │
+│  │  │          │  │          │  │          │  │ │aws-dynamodb│ │   │    │
+│  │  │          │  │          │  │          │  │ └────────────┘ │   │    │
+│  │  └──────────┘  └──────────┘  └──────────┘  └────────────────┘   │    │
 │  └─────────────────────────────────────────────────────────────────┘    │
 │                                                                         │
 │  ┌─────────────────────────────────────────────────────────────────┐    │
@@ -74,142 +78,182 @@ sample-mono-repository/
 ├── architecture/                        # ══ SYSTEM-LEVEL DOCUMENTATION ══
 │   ├── system.md                        # System architecture & diagrams
 │   ├── decisions/                       # Architectural Decision Records
-│   │   ├── README.md                    # ADR index & template
+│   │   ├── README.md
 │   │   ├── ADR-001-maven-structure.md
-│   │   └── ADR-002-ai-native-docs.md
+│   │   └── ADR-002-module-structure.md
 │   └── glossary.md                      # Domain terms & abbreviations
 │
-├── components/                          # ══ APPLICATION COMPONENTS ══
+├── common/                              # ══ SHARED MODULES ══
+│   ├── pom.xml                          # Aggregator POM
 │   │
-│   ├── service-rest/                    # REST API Component (Port 8080)
+│   ├── exception/                       # Exception handling module
 │   │   ├── pom.xml
-│   │   ├── README.md                    # Component overview
-│   │   ├── src/
-│   │   │   └── main/java/.../rest/
-│   │   │       ├── Application.java
-│   │   │       └── controller/
-│   │   ├── tests/
-│   │   │   └── java/.../rest/
-│   │   │       └── controller/
-│   │   └── docs/
-│   │       ├── overview.md              # Component purpose & design
-│   │       ├── api.md                   # API endpoints & contracts
-│   │       └── rules.md                 # Business rules & validation
+│   │   ├── src/main/java/.../exception/
+│   │   │   ├── BaseException.java
+│   │   │   ├── BusinessException.java
+│   │   │   └── TechnicalException.java
+│   │   └── src/test/java/...
 │   │
-│   ├── service-batch/                   # Batch Processing Component
+│   ├── utils/                           # Utility functions module
 │   │   ├── pom.xml
-│   │   ├── README.md
-│   │   ├── src/
-│   │   ├── tests/
-│   │   └── docs/
-│   │       ├── overview.md
-│   │       ├── api.md                   # Job definitions & triggers
-│   │       └── rules.md                 # Processing rules
+│   │   ├── src/main/java/.../utils/
+│   │   │   ├── JsonUtils.java
+│   │   │   ├── DateUtils.java
+│   │   │   └── StringUtils.java
+│   │   └── src/test/java/...
 │   │
-│   ├── service-soap/                    # SOAP Service Component (Port 8081)
+│   ├── env/                             # Environment configuration module
 │   │   ├── pom.xml
-│   │   ├── README.md
-│   │   ├── src/
-│   │   ├── tests/
-│   │   └── docs/
-│   │       ├── overview.md
-│   │       ├── api.md                   # WSDL & operations
-│   │       └── rules.md
+│   │   ├── src/main/java/.../env/
+│   │   │   ├── ConfigurationProvider.java
+│   │   │   └── EnvironmentManager.java
+│   │   └── src/test/java/...
 │   │
-│   └── infra/                           # Infrastructure Component (AWS CDK)
-│       ├── pom.xml
+│   └── aws/                             # AWS SDK wrappers (modular)
+│       ├── pom.xml                      # Aggregator POM
 │       ├── README.md
-│       ├── src/
-│       ├── tests/
-│       └── docs/
-│           ├── overview.md              # Infrastructure architecture
-│           ├── api.md                   # Construct interfaces
-│           └── rules.md                 # Deployment rules
+│       │
+│       ├── aws-s3/                      # S3 wrapper module
+│       │   ├── pom.xml
+│       │   ├── README.md
+│       │   ├── src/main/java/.../s3/
+│       │   │   └── S3ClientWrapper.java
+│       │   ├── src/test/java/...
+│       │   └── docs/
+│       │       ├── overview.md
+│       │       ├── api.md
+│       │       └── rules.md
+│       │
+│       ├── aws-sqs/                     # SQS wrapper module
+│       │   ├── pom.xml
+│       │   ├── README.md
+│       │   ├── src/main/java/.../sqs/
+│       │   │   └── SqsClientWrapper.java
+│       │   ├── src/test/java/...
+│       │   └── docs/
+│       │       ├── overview.md
+│       │       ├── api.md
+│       │       └── rules.md
+│       │
+│       └── aws-dynamodb/                # DynamoDB wrapper module
+│           ├── pom.xml
+│           ├── README.md
+│           ├── src/main/java/.../dynamodb/
+│           │   └── DynamoDbClientWrapper.java
+│           ├── src/test/java/...
+│           └── docs/
+│               ├── overview.md
+│               ├── api.md
+│               └── rules.md
 │
-├── shared/                              # ══ SHARED LIBRARIES ══
+├── service/                             # ══ SERVICE MODULES ══
+│   ├── pom.xml                          # Aggregator POM
 │   │
-│   ├── exception/                       # Exception Handling
+│   ├── service-rest/                    # REST API (Port 8080)
 │   │   ├── pom.xml
-│   │   ├── README.md
-│   │   ├── src/
-│   │   │   └── main/java/.../exception/
-│   │   │       ├── BaseException.java
-│   │   │       ├── BusinessException.java
-│   │   │       └── TechnicalException.java
-│   │   ├── tests/
-│   │   └── docs/
-│   │       ├── overview.md
-│   │       └── rules.md                 # When to use each exception
+│   │   ├── src/main/java/.../rest/
+│   │   │   ├── Application.java
+│   │   │   └── controller/
+│   │   ├── src/main/resources/
+│   │   │   └── application.yml
+│   │   └── src/test/java/...
 │   │
-│   ├── utils/                           # Utility Functions
+│   ├── service-batch/                   # Batch Processing
 │   │   ├── pom.xml
-│   │   ├── README.md
-│   │   ├── src/
-│   │   │   └── main/java/.../utils/
-│   │   │       ├── JsonUtils.java
-│   │   │       ├── DateUtils.java
-│   │   │       └── StringUtils.java
-│   │   ├── tests/
-│   │   └── docs/
-│   │       ├── overview.md
-│   │       └── api.md                   # Utility method reference
+│   │   ├── src/main/java/.../batch/
+│   │   │   ├── BatchApplication.java
+│   │   │   ├── config/
+│   │   │   └── job/
+│   │   ├── src/main/resources/
+│   │   │   └── application.yml
+│   │   └── src/test/java/...
 │   │
-│   ├── env/                             # Environment Configuration
-│   │   ├── pom.xml
-│   │   ├── README.md
-│   │   ├── src/
-│   │   ├── tests/
-│   │   └── docs/
-│   │       ├── overview.md
-│   │       └── rules.md                 # Configuration precedence
-│   │
-│   └── aws/                             # AWS SDK Wrappers
+│   └── service-soap/                    # SOAP Service (Port 8081)
 │       ├── pom.xml
-│       ├── README.md
-│       ├── src/
-│       │   └── main/java/.../aws/
-│       │       ├── S3ClientWrapper.java
-│       │       ├── SqsClientWrapper.java
-│       │       └── DynamoDbClientWrapper.java
-│       ├── tests/
-│       └── docs/
-│           ├── overview.md
-│           ├── api.md                   # Wrapper method reference
-│           └── rules.md                 # Error handling rules
+│       ├── src/main/java/.../soap/
+│       │   ├── SoapApplication.java
+│       │   ├── config/
+│       │   ├── endpoint/
+│       │   └── model/
+│       ├── src/main/resources/
+│       │   └── application.yml
+│       └── src/test/java/...
+│
+├── infra/                               # ══ INFRASTRUCTURE MODULE ══
+│   ├── pom.xml
+│   ├── src/main/java/.../infra/
+│   │   ├── InfraApp.java
+│   │   ├── MainStack.java
+│   │   └── construct/
+│   │       ├── NetworkConstruct.java
+│   │       ├── StorageConstruct.java
+│   │       ├── RestApiConstruct.java
+│   │       └── SoapApiConstruct.java
+│   └── src/test/java/...
 │
 └── docs/                                # ══ ADDITIONAL RESOURCES ══
+    ├── adr/                             # Additional ADRs
     └── diagrams/                        # Visual diagrams (Draw.io)
-        ├── c4-context.drawio
-        ├── c4-container.drawio
-        └── infrastructure.drawio
 ```
 
 ---
 
-## Module Structure Pattern
+## Module Reference
 
-Each module is **self-contained** with code, tests, and documentation:
+### Common Modules
+
+| Module | Artifact ID | Path | Purpose |
+|--------|-------------|------|---------|
+| Exception | `exception` | `common/exception` | Base/Business/Technical exceptions |
+| Utils | `utils` | `common/utils` | JSON, Date, String utilities |
+| Environment | `env` | `common/env` | Configuration management |
+| AWS S3 | `aws-s3` | `common/aws/aws-s3` | S3 operations wrapper |
+| AWS SQS | `aws-sqs` | `common/aws/aws-sqs` | SQS operations wrapper |
+| AWS DynamoDB | `aws-dynamodb` | `common/aws/aws-dynamodb` | DynamoDB operations wrapper |
+
+### Service Modules
+
+| Module | Artifact ID | Path | Port |
+|--------|-------------|------|------|
+| REST API | `service-rest` | `service/service-rest` | 8080 |
+| Batch | `service-batch` | `service/service-batch` | - |
+| SOAP | `service-soap` | `service/service-soap` | 8081 |
+
+### Infrastructure Module
+
+| Module | Artifact ID | Path | Purpose |
+|--------|-------------|------|---------|
+| Infrastructure | `infra` | `infra` | AWS CDK constructs |
+
+---
+
+## Module Dependency Graph
 
 ```
-module/
-├── pom.xml           # Build configuration
-├── README.md         # Quick start guide
-├── src/              # Source code
-├── tests/            # Test code
-└── docs/
-    ├── overview.md   # What & why (purpose, design)
-    ├── api.md        # Contracts (endpoints, interfaces)
-    └── rules.md      # Business logic (validation, constraints)
+┌─────────────────────────────────────────────────────────────────┐
+│                         SERVICES                                │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
+│  │service-rest │  │service-batch│  │ service-soap│              │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘              │
+│         │                │                │                     │
+│         └────────────────┼────────────────┘                     │
+│                          │                                      │
+│                          ▼                                      │
+├─────────────────────────────────────────────────────────────────┤
+│                         COMMON                                  │
+│  ┌────────┐  ┌────────┐  ┌──────────────────────────────┐       │
+│  │  env   │  │ utils  │  │           aws/               │       │
+│  └────────┘  └────────┘  │ ┌───────┐┌───────┐┌────────┐ │       │
+│                          │ │aws-s3 ││aws-sqs││aws-ddb │ │       │
+│                          │ └───┬───┘└───┬───┘└───┬────┘ │       │
+│                          └─────┼────────┼────────┼──────┘       │
+│                                └────────┼────────┘              │
+│                                         ▼                       │
+│                                  ┌───────────┐                  │
+│                                  │ exception │                  │
+│                                  └───────────┘                  │
+└─────────────────────────────────────────────────────────────────┘
 ```
-
-### Documentation Files
-
-| File | Purpose |
-|------|---------|
-| `README.md` | Quick start, build commands |
-| `docs/overview.md` | Purpose, architecture, design decisions |
-| `docs/api.md` | API endpoints, methods, contracts |
-| `docs/rules.md` | Business rules, validation, constraints |
 
 ---
 
@@ -227,31 +271,6 @@ module/
 
 ---
 
-## Module Dependency Graph
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        COMPONENTS                               │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
-│  │service-rest │  │service-batch│  │ service-soap│              │
-│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘              │
-│         │                │                │                     │
-│         └────────────────┼────────────────┘                     │
-│                          │                                      │
-│                          ▼                                      │
-├─────────────────────────────────────────────────────────────────┤
-│                         SHARED                                  │
-│  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐                 │
-│  │  env   │  │ utils  │  │  aws   │──│exception│                │
-│  └────────┘  └────────┘  └───┬────┘  └────────┘                 │
-│                              │                                  │
-│                              ▼                                  │
-│                      AWS SDK / External                         │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
 ## Quick Start
 
 ### Build Commands
@@ -263,8 +282,8 @@ mvn clean verify
 # Format code (REQUIRED before commit)
 mvn spotless:apply
 
-# Build specific component
-mvn clean verify -pl components/service-rest -am
+# Build specific module
+mvn clean verify -pl service/service-rest -am
 
 # Run tests only
 mvn test
@@ -274,21 +293,69 @@ mvn test
 
 ```bash
 # REST API (http://localhost:8080)
-cd components/service-rest && mvn spring-boot:run
+cd service/service-rest && mvn spring-boot:run
 
 # SOAP Service (http://localhost:8081)
-cd components/service-soap && mvn spring-boot:run
+cd service/service-soap && mvn spring-boot:run
 
 # Batch Jobs
-cd components/service-batch && mvn spring-boot:run
+cd service/service-batch && mvn spring-boot:run
 ```
 
 ### Deploy Infrastructure
 
 ```bash
-cd components/infra
+cd infra
 cdk synth    # Generate CloudFormation
 cdk deploy   # Deploy to AWS
+```
+
+---
+
+## Dependencies
+
+### Using Common Modules
+
+```xml
+<!-- Exception handling -->
+<dependency>
+    <groupId>com.example</groupId>
+    <artifactId>exception</artifactId>
+</dependency>
+
+<!-- Utilities -->
+<dependency>
+    <groupId>com.example</groupId>
+    <artifactId>utils</artifactId>
+</dependency>
+
+<!-- Environment config -->
+<dependency>
+    <groupId>com.example</groupId>
+    <artifactId>env</artifactId>
+</dependency>
+```
+
+### Using AWS Modules (only what you need)
+
+```xml
+<!-- S3 only -->
+<dependency>
+    <groupId>com.example</groupId>
+    <artifactId>aws-s3</artifactId>
+</dependency>
+
+<!-- SQS only -->
+<dependency>
+    <groupId>com.example</groupId>
+    <artifactId>aws-sqs</artifactId>
+</dependency>
+
+<!-- DynamoDB only -->
+<dependency>
+    <groupId>com.example</groupId>
+    <artifactId>aws-dynamodb</artifactId>
+</dependency>
 ```
 
 ---
@@ -308,55 +375,6 @@ cdk deploy   # Deploy to AWS
 |----------|-------------|
 | POST `/ws` | SOAP request handler |
 | GET `/ws/sample.wsdl` | WSDL definition |
-
----
-
-## Documentation Hierarchy
-
-```
-LEVEL 1: System (architecture/)
-├── system.md           # Overall architecture
-├── decisions/          # Why we made choices (ADRs)
-└── glossary.md         # Terminology
-
-LEVEL 2: Component (components/*/docs/)
-├── overview.md         # Component architecture
-├── api.md              # Interface contracts
-└── rules.md            # Business rules
-
-LEVEL 3: Code
-├── README.md           # Quick reference
-├── Javadoc             # API documentation
-└── Test classes        # Usage examples
-```
-
----
-
-## AI Agent Guidelines
-
-### Context Loading Order
-
-```
-1. CLAUDE.md                  # Build & conventions
-2. architecture/system.md     # System architecture
-3. module/README.md           # Module quick start
-4. module/docs/overview.md    # Module design
-5. module/docs/api.md         # API contracts
-6. module/docs/rules.md       # Business rules
-7. Target source file         # Code to modify
-8. Target test file           # Expected behavior
-```
-
-### When Modifying a Module
-
-1. Read `module/README.md` first
-2. Check `module/docs/rules.md` for business constraints
-3. Review `module/docs/api.md` for contracts
-4. Read target source file
-5. Read corresponding test file
-6. Make changes following patterns
-7. Update tests (100% coverage required)
-8. Run `mvn spotless:apply`
 
 ---
 
@@ -398,32 +416,49 @@ class MyClassTest {
 
 ## Adding New Modules
 
+### New Common Module
+
+```
+common/new-module/
+├── pom.xml           # Inherit from ../../pom.xml
+├── README.md
+├── src/
+├── tests/
+└── docs/
+    ├── overview.md
+    ├── api.md
+    └── rules.md
+```
+
 ### New Service Module
 
 ```
 service/service-new/
-├── pom.xml           # Inherit from parent
-├── README.md         # Quick start
-├── src/              # Source code
-├── tests/            # Test code
+├── pom.xml           # Inherit from ../../pom.xml
+├── README.md
+├── src/
+├── tests/
 └── docs/
-    ├── overview.md   # Purpose & design
-    ├── api.md        # Endpoints
-    └── rules.md      # Business rules
+    ├── overview.md
+    ├── api.md
+    └── rules.md
 ```
 
-### New Common Module
+---
+
+## AI Agent Guidelines
+
+### Context Loading Order
 
 ```
-common/common-new/
-├── pom.xml           # Inherit from parent
-├── README.md         # Quick start
-├── src/              # Source code
-├── tests/            # Test code
-└── docs/
-    ├── overview.md   # Purpose & design
-    ├── api.md        # Methods & interfaces
-    └── rules.md      # Usage rules
+1. CLAUDE.md                  # Build & conventions
+2. architecture/system.md     # System architecture
+3. module/README.md           # Module quick start
+4. module/docs/overview.md    # Module design
+5. module/docs/api.md         # API contracts
+6. module/docs/rules.md       # Business rules
+7. Target source file         # Code to modify
+8. Target test file           # Expected behavior
 ```
 
 ---
