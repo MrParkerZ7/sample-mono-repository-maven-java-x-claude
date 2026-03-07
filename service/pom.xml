@@ -17,8 +17,8 @@
     <description>Aggregator for service modules</description>
 
     <modules>
-        <module>service-rest</module>
-        <module>service-batch</module>
-        <module>service-soap</module>
+        <module>rest</module>
+        <module>batch</module>
+        <module>soap</module>
     </modules>
 </project>

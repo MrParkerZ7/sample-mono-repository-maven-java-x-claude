@@ -44,9 +44,9 @@ repo/
 │   └── glossary.md        # Terms
 │
 ├── service/               # Service modules
-│   ├── service-rest/      # REST API (port 8080)
-│   ├── service-batch/     # Batch jobs
-│   └── service-soap/      # SOAP (port 8081)
+│   ├── rest/              # REST API (port 8080)
+│   ├── batch/             # Batch jobs
+│   └── soap/              # SOAP (port 8081)
 │
 ├── common/                # Shared modules
 │   ├── exception/         # Base/Business/Technical
@@ -89,7 +89,7 @@ mvn clean verify
 mvn clean compile
 
 # Build specific module
-mvn clean verify -pl service/service-rest -am
+mvn clean verify -pl service/rest -am
 
 # Format code (REQUIRED before commit)
 mvn spotless:apply
@@ -128,9 +128,9 @@ throw new TechnicalException("ERR_CODE", "Message", cause);
 
 | Module | Path | Port |
 |--------|------|------|
-| REST | `service/service-rest` | 8080 |
-| Batch | `service/service-batch` | - |
-| SOAP | `service/service-soap` | 8081 |
+| REST | `service/rest` | 8080 |
+| Batch | `service/batch` | - |
+| SOAP | `service/soap` | 8081 |
 | CDK | `infra` | - |
 
 ---

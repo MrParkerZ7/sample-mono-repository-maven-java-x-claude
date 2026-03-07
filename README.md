@@ -37,7 +37,7 @@ module/
 │  ┌─────────────────────────────────────────────────────────────────┐    │
 │  │                      service/ (modules)                         │    │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │    │
-│  │  │ service-rest│  │service-batch│  │ service-soap│              │    │
+│  │  │    rest     │  │    batch    │  │    soap     │              │    │
 │  │  │  ├ src/     │  │  ├ src/     │  │  ├ src/     │              │    │
 │  │  │  ├ tests/   │  │  ├ tests/   │  │  ├ tests/   │              │    │
 │  │  │  └ docs/    │  │  └ docs/    │  │  └ docs/    │              │    │
@@ -149,7 +149,7 @@ sample-mono-repository/
 ├── service/                             # ══ SERVICE MODULES ══
 │   ├── pom.xml                          # Aggregator POM
 │   │
-│   ├── service-rest/                    # REST API (Port 8080)
+│   ├── rest/                            # REST API (Port 8080)
 │   │   ├── pom.xml
 │   │   ├── src/main/java/.../rest/
 │   │   │   ├── Application.java
@@ -158,7 +158,7 @@ sample-mono-repository/
 │   │   │   └── application.yml
 │   │   └── src/test/java/...
 │   │
-│   ├── service-batch/                   # Batch Processing
+│   ├── batch/                           # Batch Processing
 │   │   ├── pom.xml
 │   │   ├── src/main/java/.../batch/
 │   │   │   ├── BatchApplication.java
@@ -168,7 +168,7 @@ sample-mono-repository/
 │   │   │   └── application.yml
 │   │   └── src/test/java/...
 │   │
-│   └── service-soap/                    # SOAP Service (Port 8081)
+│   └── soap/                            # SOAP Service (Port 8081)
 │       ├── pom.xml
 │       ├── src/main/java/.../soap/
 │       │   ├── SoapApplication.java
@@ -215,9 +215,9 @@ sample-mono-repository/
 
 | Module | Artifact ID | Path | Port |
 |--------|-------------|------|------|
-| REST API | `service-rest` | `service/service-rest` | 8080 |
-| Batch | `service-batch` | `service/service-batch` | - |
-| SOAP | `service-soap` | `service/service-soap` | 8081 |
+| REST API | `rest` | `service/rest` | 8080 |
+| Batch | `batch` | `service/batch` | - |
+| SOAP | `soap` | `service/soap` | 8081 |
 
 ### Infrastructure Module
 
@@ -233,7 +233,7 @@ sample-mono-repository/
 ┌─────────────────────────────────────────────────────────────────┐
 │                         SERVICES                                │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
-│  │service-rest │  │service-batch│  │ service-soap│              │
+│  │    rest     │  │    batch    │  │    soap     │              │
 │  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘              │
 │         │                │                │                     │
 │         └────────────────┼────────────────┘                     │
@@ -283,7 +283,7 @@ mvn clean verify
 mvn spotless:apply
 
 # Build specific module
-mvn clean verify -pl service/service-rest -am
+mvn clean verify -pl service/rest -am
 
 # Run tests only
 mvn test
@@ -293,13 +293,13 @@ mvn test
 
 ```bash
 # REST API (http://localhost:8080)
-cd service/service-rest && mvn spring-boot:run
+cd service/rest && mvn spring-boot:run
 
 # SOAP Service (http://localhost:8081)
-cd service/service-soap && mvn spring-boot:run
+cd service/soap && mvn spring-boot:run
 
 # Batch Jobs
-cd service/service-batch && mvn spring-boot:run
+cd service/batch && mvn spring-boot:run
 ```
 
 ### Deploy Infrastructure
