@@ -1,13 +1,12 @@
 package com.example.service.payment.model;
 
+import com.example.model.base.AuditableEntity;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Objects;
 
 /** Domain model representing a payment. */
-public class Payment {
+public class Payment extends AuditableEntity {
 
-  private String id;
   private String transactionId;
   private String orderId;
   private String userId;
@@ -16,8 +15,6 @@ public class Payment {
   private PaymentMethod paymentMethod;
   private PaymentStatus status;
   private String failureReason;
-  private Instant createdAt;
-  private Instant updatedAt;
 
   /** Default constructor. */
   public Payment() {}
@@ -35,7 +32,7 @@ public class Payment {
       String failureReason,
       Instant createdAt,
       Instant updatedAt) {
-    this.id = id;
+    super(id, createdAt, updatedAt);
     this.transactionId = transactionId;
     this.orderId = orderId;
     this.userId = userId;
@@ -44,16 +41,6 @@ public class Payment {
     this.paymentMethod = paymentMethod;
     this.status = status;
     this.failureReason = failureReason;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   public String getTransactionId() {
@@ -118,34 +105,5 @@ public class Payment {
 
   public void setFailureReason(String failureReason) {
     this.failureReason = failureReason;
-  }
-
-  public Instant getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(Instant createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public Instant getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(Instant updatedAt) {
-    this.updatedAt = updatedAt;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Payment payment = (Payment) o;
-    return Objects.equals(id, payment.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
   }
 }

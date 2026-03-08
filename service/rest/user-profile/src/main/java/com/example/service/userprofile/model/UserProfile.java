@@ -1,19 +1,16 @@
 package com.example.service.userprofile.model;
 
+import com.example.model.base.AuditableEntity;
 import java.time.Instant;
-import java.util.Objects;
 
 /** Domain model representing a user profile. */
-public class UserProfile {
+public class UserProfile extends AuditableEntity {
 
-  private String id;
   private String email;
   private String firstName;
   private String lastName;
   private String phoneNumber;
   private UserStatus status;
-  private Instant createdAt;
-  private Instant updatedAt;
 
   /** Default constructor. */
   public UserProfile() {}
@@ -28,22 +25,12 @@ public class UserProfile {
       UserStatus status,
       Instant createdAt,
       Instant updatedAt) {
-    this.id = id;
+    super(id, createdAt, updatedAt);
     this.email = email;
     this.firstName = firstName;
     this.lastName = lastName;
     this.phoneNumber = phoneNumber;
     this.status = status;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   public String getEmail() {
@@ -84,34 +71,5 @@ public class UserProfile {
 
   public void setStatus(UserStatus status) {
     this.status = status;
-  }
-
-  public Instant getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(Instant createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public Instant getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(Instant updatedAt) {
-    this.updatedAt = updatedAt;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    UserProfile that = (UserProfile) o;
-    return Objects.equals(id, that.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
   }
 }

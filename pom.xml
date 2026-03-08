@@ -14,6 +14,7 @@
 
     <modules>
         <module>common</module>
+        <module>model</module>
         <module>service</module>
         <module>infra</module>
     </modules>
@@ -93,6 +94,13 @@
             <dependency>
                 <groupId>com.example</groupId>
                 <artifactId>env</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Model Modules -->
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>model-base</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

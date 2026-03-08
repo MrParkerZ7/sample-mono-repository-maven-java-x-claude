@@ -45,15 +45,7 @@ repo/
 │   ├── analysis/          # Analysis docs
 │   └── diagrams/          # Draw.io diagrams
 │
-├── service/               # Service modules (hierarchical)
-│   ├── rest/              # REST aggregator
-│   │   └── sample/        # Sample REST API (port 8080)
-│   ├── batch/             # Batch aggregator
-│   │   └── sample/        # Sample batch job
-│   └── soap/              # SOAP aggregator
-│       └── sample/        # Sample SOAP (port 8081)
-│
-├── common/                # Shared modules
+├── common/                # Shared utility modules
 │   ├── exception/         # Base/Business/Technical
 │   ├── utils/             # JSON/Date/String
 │   ├── env/               # Configuration
@@ -61,6 +53,17 @@ repo/
 │       ├── aws-s3/        # S3 only
 │       ├── aws-sqs/       # SQS only
 │       └── aws-dynamodb/  # DynamoDB only
+│
+├── model/                 # Shared domain model modules
+│   └── base/              # BaseEntity, AuditableEntity, interfaces
+│
+├── service/               # Service modules (hierarchical)
+│   ├── rest/              # REST aggregator
+│   │   └── sample/        # Sample REST API (port 8080)
+│   ├── batch/             # Batch aggregator
+│   │   └── sample/        # Sample batch job
+│   └── soap/              # SOAP aggregator
+│       └── sample/        # Sample SOAP (port 8081)
 │
 └── infra/                 # AWS CDK infrastructure
 ```
@@ -133,12 +136,22 @@ throw new TechnicalException("ERR_CODE", "Message", cause);
 
 | Type | Module | Artifact ID | Path | Port |
 |------|--------|-------------|------|------|
+| Model | Base | `model-base` | `model/base` | - |
 | REST | Sample | `rest-sample` | `service/rest/sample` | 8080 |
 | Batch | Sample | `batch-sample` | `service/batch/sample` | - |
 | SOAP | Sample | `soap-sample` | `service/soap/sample` | 8081 |
 | Infra | CDK | `infra` | `infra` | - |
 
 **Note**: Each service type (rest, batch, soap) is an aggregator supporting multiple services.
+
+### Layer Dependencies
+```
+Common  (utilities, no domain knowledge)
+  |
+Model   (shared domain models, extends common)
+  |
+Service (API endpoints, depends on model + common)
+```
 
 ---
 
@@ -154,6 +167,17 @@ common/new-module/
 └── docs/
 ```
 Add `<module>new-module</module>` to `common/pom.xml`
+
+### New Model Module
+```
+model/new-model/
+├── pom.xml              # relativePath: ../../pom.xml
+├── README.md            # artifactId: model-new-model
+├── src/
+├── tests/
+└── docs/
+```
+Add `<module>new-model</module>` to `model/pom.xml`
 
 ### New Service Module
 ```

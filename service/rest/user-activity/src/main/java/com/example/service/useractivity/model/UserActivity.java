@@ -1,13 +1,12 @@
 package com.example.service.useractivity.model;
 
+import com.example.model.base.BaseEntity;
 import java.time.Instant;
 import java.util.Map;
-import java.util.Objects;
 
 /** Domain model representing a user activity event. */
-public class UserActivity {
+public class UserActivity extends BaseEntity {
 
-  private String id;
   private String userId;
   private ActivityType activityType;
   private String resourcePath;
@@ -29,7 +28,7 @@ public class UserActivity {
       Instant timestamp,
       String ipAddress,
       String userAgent) {
-    this.id = id;
+    super(id);
     this.userId = userId;
     this.activityType = activityType;
     this.resourcePath = resourcePath;
@@ -37,14 +36,6 @@ public class UserActivity {
     this.timestamp = timestamp;
     this.ipAddress = ipAddress;
     this.userAgent = userAgent;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   public String getUserId() {
@@ -101,18 +92,5 @@ public class UserActivity {
 
   public void setUserAgent(String userAgent) {
     this.userAgent = userAgent;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    UserActivity that = (UserActivity) o;
-    return Objects.equals(id, that.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
   }
 }

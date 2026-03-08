@@ -1,12 +1,11 @@
 package com.example.service.order.model;
 
+import com.example.model.base.BaseEntity;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 /** Domain model representing an order line item. */
-public class OrderItem {
+public class OrderItem extends BaseEntity {
 
-  private String id;
   private String productId;
   private String productName;
   private Integer quantity;
@@ -24,20 +23,12 @@ public class OrderItem {
       Integer quantity,
       BigDecimal unitPrice,
       BigDecimal totalPrice) {
-    this.id = id;
+    super(id);
     this.productId = productId;
     this.productName = productName;
     this.quantity = quantity;
     this.unitPrice = unitPrice;
     this.totalPrice = totalPrice;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   public String getProductId() {
@@ -78,18 +69,5 @@ public class OrderItem {
 
   public void setTotalPrice(BigDecimal totalPrice) {
     this.totalPrice = totalPrice;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    OrderItem orderItem = (OrderItem) o;
-    return Objects.equals(id, orderItem.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
   }
 }
